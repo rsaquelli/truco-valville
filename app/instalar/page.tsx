@@ -23,7 +23,7 @@ type BeforeInstallPromptEvent = Event & {
 };
 
 function detectarDispositivo() {
-  if (typeof navigator === "undefined") {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
     return {
       isIOS: false,
       isAndroid: false,
@@ -39,10 +39,13 @@ function detectarDispositivo() {
 
   const isAndroid = /android/.test(userAgent);
 
+  const navigatorWithStandalone = navigator as Navigator & {
+    standalone?: boolean;
+  };
+
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
-    // Safari iOS
-    ("standalone" in navigator && Boolean((navigator as Navigator & { standalone?: boolean }).standalone));
+    Boolean(navigatorWithStandalone.standalone);
 
   return {
     isIOS,
