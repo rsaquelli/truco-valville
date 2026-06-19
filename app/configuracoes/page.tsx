@@ -5,10 +5,14 @@ import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   CheckCircle2,
+  Home,
   Loader2,
+  PlayCircle,
   RefreshCw,
   Save,
   Settings,
+  Trophy,
+  Wallet,
   XCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -77,7 +81,9 @@ export default function ConfiguracoesPage() {
     }
 
     if (!data) {
-      setErro("Nenhuma configuração encontrada. Rode o SQL da etapa 8.");
+      setErro(
+        "Nenhuma configuração encontrada. Verifique a tabela configuracoes_grupo no Supabase."
+      );
       setCarregando(false);
       return;
     }
@@ -197,41 +203,41 @@ export default function ConfiguracoesPage() {
   const valorPreview = Number(form.valor_mensalidade.replace(",", ".") || 0);
 
   return (
-    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-28 pt-5 sm:px-6 sm:pb-8 lg:px-8">
-      <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
-        <Link
-          href="/"
-          className="mb-4 inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
-        >
-          <ArrowLeft size={18} />
-          Voltar
-        </Link>
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
-              <Settings size={15} />
-              Etapa 8
-            </div>
-
-            <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
-              Configurações
-            </h1>
-
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 sm:text-base">
-              Parametrize o grupo, mensalidade, vencimento e mensagens padrão
-              para cobrança e convite de rodada.
-            </p>
-          </div>
+    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-64 pt-5 md:pb-8 sm:px-6 lg:px-8">
+      <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
+        <div className="mb-4 flex flex-wrap gap-2">
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
+          >
+            <ArrowLeft size={18} />
+            Voltar
+          </Link>
 
           <button
             type="button"
             onClick={carregarConfiguracao}
-            className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl border border-[#071A4A]/15 bg-white px-5 py-3 text-sm font-black text-[#071A4A] shadow-lg shadow-[#071A4A]/5 transition active:scale-[0.99] sm:hover:border-[#E6AA00]/50 sm:hover:bg-[#FAF8F1]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-white px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
           >
             <RefreshCw size={18} />
             Atualizar
           </button>
+        </div>
+
+        <div>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
+            <Settings size={15} />
+            Configurações
+          </div>
+
+          <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
+            Configurações
+          </h1>
+
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-700 sm:text-base">
+            Parametrize o grupo, mensalidade, vencimento e mensagens padrão para
+            cobrança e convite de rodada.
+          </p>
         </div>
       </header>
 
@@ -250,10 +256,13 @@ export default function ConfiguracoesPage() {
       )}
 
       <section className="mb-5 grid gap-4 sm:mb-8 lg:grid-cols-3">
-        <div className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
+        <div className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
           <p className="text-sm font-black text-slate-500">Grupo</p>
           <p className="mt-1 truncate text-2xl font-black text-[#071A4A]">
             {form.nome_grupo || "-"}
+          </p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+            Nome exibido nas mensagens e telas do app.
           </p>
         </div>
 
@@ -262,6 +271,9 @@ export default function ConfiguracoesPage() {
           <p className="mt-1 text-3xl font-black text-[#071A4A]">
             {formatarValorBR(valorPreview || 0)}
           </p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-[#5A3924]">
+            Valor padrão para gerar o caixa mensal.
+          </p>
         </div>
 
         <div className="rounded-[1.5rem] border border-green-600/20 bg-green-50 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
@@ -269,10 +281,13 @@ export default function ConfiguracoesPage() {
           <p className="mt-1 text-3xl font-black text-green-800">
             Dia {form.dia_vencimento || "-"}
           </p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-green-700/80">
+            Dia padrão para cobrança da mensalidade.
+          </p>
         </div>
       </section>
 
-      <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
+      <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
         {carregando ? (
           <div className="flex min-h-48 items-center justify-center rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-5 text-sm font-bold text-slate-500">
             <Loader2 size={18} className="mr-2 animate-spin" />
@@ -280,6 +295,15 @@ export default function ConfiguracoesPage() {
           </div>
         ) : (
           <div className="grid gap-5">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
+                Dados do grupo
+              </p>
+              <h2 className="mt-1 text-2xl font-black text-[#071A4A]">
+                Parâmetros principais
+              </h2>
+            </div>
+
             <div className="grid gap-5 lg:grid-cols-3">
               <div>
                 <label className="mb-2 block text-sm font-black text-[#071A4A]">
@@ -340,39 +364,41 @@ export default function ConfiguracoesPage() {
               />
             </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-black text-[#071A4A]">
-                Texto padrão de cobrança *
-              </label>
-              <textarea
-                value={form.texto_cobranca}
-                onChange={(event) =>
-                  atualizarCampo("texto_cobranca", event.target.value)
-                }
-                rows={5}
-                className="w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold leading-6 text-slate-800 outline-none transition focus:border-[#0B6B3A]"
-              />
-            </div>
+            <div className="grid gap-5 lg:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-black text-[#071A4A]">
+                  Texto padrão de cobrança *
+                </label>
+                <textarea
+                  value={form.texto_cobranca}
+                  onChange={(event) =>
+                    atualizarCampo("texto_cobranca", event.target.value)
+                  }
+                  rows={7}
+                  className="w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold leading-6 text-slate-800 outline-none transition focus:border-[#0B6B3A]"
+                />
+              </div>
 
-            <div>
-              <label className="mb-2 block text-sm font-black text-[#071A4A]">
-                Texto padrão de convite da rodada *
-              </label>
-              <textarea
-                value={form.texto_convite_rodada}
-                onChange={(event) =>
-                  atualizarCampo("texto_convite_rodada", event.target.value)
-                }
-                rows={5}
-                className="w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold leading-6 text-slate-800 outline-none transition focus:border-[#0B6B3A]"
-              />
+              <div>
+                <label className="mb-2 block text-sm font-black text-[#071A4A]">
+                  Texto padrão de convite da rodada *
+                </label>
+                <textarea
+                  value={form.texto_convite_rodada}
+                  onChange={(event) =>
+                    atualizarCampo("texto_convite_rodada", event.target.value)
+                  }
+                  rows={7}
+                  className="w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold leading-6 text-slate-800 outline-none transition focus:border-[#0B6B3A]"
+                />
+              </div>
             </div>
 
             <button
               type="button"
               onClick={salvarConfiguracao}
               disabled={salvando}
-              className="touch-button inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-5 py-4 text-base font-black text-white shadow-lg shadow-[#0B6B3A]/20 transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:hover:bg-[#064527]"
+              className="touch-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-5 py-4 text-base font-black text-white shadow-lg shadow-[#0B6B3A]/20 transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:hover:bg-[#064527]"
             >
               {salvando ? (
                 <Loader2 size={20} className="animate-spin" />
@@ -384,6 +410,44 @@ export default function ConfiguracoesPage() {
           </div>
         )}
       </section>
+
+      <div className="h-40 shrink-0 md:hidden" aria-hidden="true" />
+
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#071A4A]/10 bg-white/95 px-3 py-2 shadow-2xl shadow-[#071A4A]/20 backdrop-blur md:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
+          <Link
+            href="/"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Home size={20} />
+            <span className="mt-1 text-[10px] font-black">Início</span>
+          </Link>
+
+          <Link
+            href="/partidas/nova"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <PlayCircle size={20} />
+            <span className="mt-1 text-[10px] font-black">Partida</span>
+          </Link>
+
+          <Link
+            href="/ranking"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Trophy size={20} />
+            <span className="mt-1 text-[10px] font-black">Ranking</span>
+          </Link>
+
+          <Link
+            href="/caixa"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Wallet size={20} />
+            <span className="mt-1 text-[10px] font-black">Caixa</span>
+          </Link>
+        </div>
+      </nav>
     </main>
   );
 }
