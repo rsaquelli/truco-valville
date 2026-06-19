@@ -67,3 +67,14 @@ export type PartidaComRelacionamentos = Partida & {
   rodada: Rodada | null;
   participantes_partida: ParticipantePartidaComJogador[];
 };
+export type ConfiguracaoGrupo = {
+  id: string;
+  nome_grupo: string;
+  valor_mensalidade: number;
+  dia_vencimento: number;
+  whatsapp_responsavel: string | null;
+  texto_cobranca: string;
+  texto_convite_rodada: string;
+  created_at: string;
+  updated_at: string;
+};
