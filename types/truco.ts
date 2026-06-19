@@ -78,3 +78,22 @@ export type ConfiguracaoGrupo = {
   created_at: string;
   updated_at: string;
 };
+export type StatusMensalidade = "pendente" | "pago" | "isento";
+
+export type MensalidadeJogador = {
+  id: string;
+  jogador_id: string;
+  competencia_mes: number;
+  competencia_ano: number;
+  valor: number;
+  status: StatusMensalidade;
+  data_pagamento: string | null;
+  forma_pagamento: string | null;
+  observacoes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MensalidadeComJogador = MensalidadeJogador & {
+  jogador: Jogador | null;
+};
