@@ -82,15 +82,21 @@ function formatarDataHora(valor: string) {
   });
 }
 
-function nomesDoTime(
-  partida: PartidaComRelacionamentos,
-  time: TimePartida
-) {
+function nomesDoTime(partida: PartidaComRelacionamentos, time: TimePartida) {
   return partida.participantes_partida
     .filter((participante) => participante.time === time)
     .map((participante) => nomeJogador(participante.jogador));
 }
+function nomePrincipalDoTime(
+  partida: PartidaComRelacionamentos,
+  time: TimePartida
+) {
+  const primeiroParticipante = partida.participantes_partida.find(
+    (participante) => participante.time === time
+  );
 
+  return nomeJogador(primeiroParticipante?.jogador);
+}
 export default function NovaPartidaPage() {
   const [jogadores, setJogadores] = useState<Jogador[]>([]);
   const [rodadas, setRodadas] = useState<Rodada[]>([]);
@@ -143,7 +149,6 @@ export default function NovaPartidaPage() {
   async function carregarDados() {
     setCarregando(true);
     setErro(null);
-    setSucesso(null);
 
     const [jogadoresResult, rodadasResult, partidasResult] = await Promise.all([
       supabase
@@ -274,7 +279,9 @@ export default function NovaPartidaPage() {
     setSucesso(null);
 
     if (partidaAtual && partidaAtual.status === "em_andamento") {
-      setErro("Já existe uma partida em andamento. Encerre ou cancele antes de iniciar outra.");
+      setErro(
+        "Já existe uma partida em andamento. Encerre ou cancele antes de iniciar outra."
+      );
       return;
     }
 
@@ -562,11 +569,195 @@ export default function NovaPartidaPage() {
   }
 
   function trucoVisual() {
-    setSucesso("TRUUUCO! Por enquanto é só grito. A regra de valor entra depois.");
+    setSucesso(
+      "TRUUUCO! Por enquanto é só grito. A regra de valor entra depois."
+    );
   }
 
-  const timeANomes = partidaAtual ? nomesDoTime(partidaAtual, "A") : [];
-  const timeBNomes = partidaAtual ? nomesDoTime(partidaAtual, "B") : [];
+ const timeANomes = partidaAtual ? nomesDoTime(partidaAtual, "A") : [];
+const timeBNomes = partidaAtual ? nomesDoTime(partidaAtual, "B") : [];
+
+const timeANomeMarcador = partidaAtual
+  ? nomePrincipalDoTime(partidaAtual, "A")
+  : "-";
+
+const timeBNomeMarcador = partidaAtual
+  ? nomePrincipalDoTime(partidaAtual, "B")
+  : "-";
+
+  if (partidaAtual) {
+    return (
+      <main className="safe-bottom min-h-[100dvh] bg-[#050505] px-3 pb-4 pt-4 text-white">
+        <header className="mb-3 flex items-center justify-between gap-3">
+          <Link
+            href="/"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white active:scale-95"
+          >
+            <ArrowLeft size={21} />
+          </Link>
+
+          <div className="min-w-0 flex-1 text-center">
+            <p className="truncate text-xs font-black uppercase tracking-[0.22em] text-[#F4C542]">
+              Truco no Valville
+            </p>
+            <p className="truncate text-sm font-bold text-white/70">
+              {partidaAtual.rodada
+                ? `${formatarData(partidaAtual.rodada.data)}${
+                    partidaAtual.rodada.local
+                      ? ` — ${partidaAtual.rodada.local}`
+                      : ""
+                  }`
+                : "Partida em andamento"}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={carregarDados}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white active:scale-95"
+          >
+            <RefreshCw size={20} />
+          </button>
+        </header>
+
+        {erro && (
+          <div className="mb-3 rounded-2xl border border-red-500/30 bg-red-500/15 p-3 text-sm font-bold text-red-100">
+            {erro}
+          </div>
+        )}
+
+        {sucesso && (
+          <div className="mb-3 rounded-2xl border border-green-500/25 bg-green-500/15 p-3 text-sm font-bold text-green-100">
+            {sucesso}
+          </div>
+        )}
+
+        <section className="overflow-hidden rounded-[1.8rem] border border-white/10 bg-[radial-gradient(circle_at_top,#1f1f1f,#050505_55%)] p-4 shadow-2xl">
+          <div className="mb-4 flex items-center justify-center gap-2">
+            <span className="rounded-full border border-[#F4C542]/30 bg-[#F4C542]/10 px-3 py-1 text-xs font-black text-[#F4C542]">
+              {partidaAtual.tipo_partida}
+            </span>
+            <span className="rounded-full border border-green-400/25 bg-green-400/10 px-3 py-1 text-xs font-black text-green-300">
+              Até {partidaAtual.limite_pontos}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="text-center">
+              <div className="mb-2 flex min-h-[58px] items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-2 py-3">
+                <p className="truncate text-2xl font-black leading-tight tracking-wide text-white drop-shadow sm:text-4xl">
+                  {timeANomeMarcador}
+                </p>
+              </div>
+
+              <p className="mb-3 text-[5.2rem] font-black leading-none tracking-tight text-white drop-shadow-[0_3px_0_rgba(0,0,0,0.8)] sm:text-9xl">
+                {partidaAtual.placar_time_a}
+              </p>
+
+              <button
+                type="button"
+                disabled={salvando}
+                onClick={() => marcarPonto("A", 1)}
+                className="mb-3 flex h-20 w-full items-center justify-center gap-2 rounded-[1.4rem] border border-white/20 bg-white text-3xl font-black text-black shadow-lg active:scale-[0.98] disabled:opacity-50"
+              >
+                <Plus size={28} /> 1
+              </button>
+
+              <button
+                type="button"
+                disabled={salvando}
+                onClick={() => marcarPonto("A", -1)}
+                className="flex h-12 w-full items-center justify-center gap-1 rounded-2xl bg-red-600 text-base font-black text-white active:scale-[0.98] disabled:opacity-50"
+              >
+                <Minus size={18} /> 1
+              </button>
+            </div>
+
+            <div className="text-center">
+              <div className="mb-2 min-h-[58px] rounded-2xl border border-white/10 bg-white/5 px-2 py-3">
+                <p className="truncate text-2xl font-black leading-tight tracking-wide text-white drop-shadow sm:text-4xl">
+                  {timeBNomeMarcador}
+                </p>
+              </div>
+
+              <p className="mb-3 text-[5.2rem] font-black leading-none tracking-tight text-white drop-shadow-[0_3px_0_rgba(0,0,0,0.8)] sm:text-9xl">
+                {partidaAtual.placar_time_b}
+              </p>
+
+              <button
+                type="button"
+                disabled={salvando}
+                onClick={() => marcarPonto("B", 1)}
+                className="mb-3 flex h-20 w-full items-center justify-center gap-2 rounded-[1.4rem] border border-white/20 bg-white text-3xl font-black text-black shadow-lg active:scale-[0.98] disabled:opacity-50"
+              >
+                <Plus size={28} /> 1
+              </button>
+
+              <button
+                type="button"
+                disabled={salvando}
+                onClick={() => marcarPonto("B", -1)}
+                className="flex h-12 w-full items-center justify-center gap-1 rounded-2xl bg-red-600 text-base font-black text-white active:scale-[0.98] disabled:opacity-50"
+              >
+                <Minus size={18} /> 1
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={trucoVisual}
+            className="mt-5 flex h-16 w-full items-center justify-center rounded-2xl border border-white/35 bg-white/10 text-xl font-black text-white shadow-inner active:scale-[0.98]"
+          >
+            ❤️ Truuuco! ❤️
+          </button>
+
+          {(partidaAtual.placar_time_a >= limitePontos ||
+            partidaAtual.placar_time_b >= limitePontos) && (
+            <div className="mt-4 rounded-2xl border border-[#F4C542]/30 bg-[#F4C542]/10 p-3 text-center text-sm font-black text-[#F4C542]">
+              Um dos times chegou a 12. Pode encerrar.
+            </div>
+          )}
+
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            <button
+              type="button"
+              disabled={salvando}
+              onClick={desfazerUltimoPonto}
+              className="flex min-h-14 flex-col items-center justify-center rounded-2xl border border-white/15 bg-white/10 px-2 text-xs font-black text-white active:scale-[0.98] disabled:opacity-50"
+            >
+              <RotateCcw size={18} />
+              Desfazer
+            </button>
+
+            <button
+              type="button"
+              disabled={salvando}
+              onClick={encerrarPartida}
+              className="flex min-h-14 flex-col items-center justify-center rounded-2xl bg-[#0B6B3A] px-2 text-xs font-black text-white active:scale-[0.98] disabled:opacity-50"
+            >
+              <Trophy size={18} />
+              Encerrar
+            </button>
+
+            <button
+              type="button"
+              disabled={salvando}
+              onClick={cancelarPartida}
+              className="flex min-h-14 flex-col items-center justify-center rounded-2xl bg-red-600 px-2 text-xs font-black text-white active:scale-[0.98] disabled:opacity-50"
+            >
+              <XCircle size={18} />
+              Cancelar
+            </button>
+          </div>
+        </section>
+
+        <p className="mt-3 text-center text-xs font-bold text-white/40">
+          Marcador mobile — Truco no Valville
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-28 pt-5 sm:px-6 sm:pb-8 lg:px-8">
@@ -583,7 +774,7 @@ export default function NovaPartidaPage() {
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
               <Club size={15} />
-              Etapa 4 corrigida
+              Etapa 4.1
             </div>
 
             <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
@@ -591,8 +782,8 @@ export default function NovaPartidaPage() {
             </h1>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 sm:text-base">
-              Marcador real de truco: 1x1, 2x2 ou 3x3, placar até 12 pontos e
-              várias partidas dentro da mesma rodada.
+              Monte uma partida 1x1, 2x2 ou 3x3. Depois de iniciar, a tela vira
+              marcador mobile em modo jogo.
             </p>
           </div>
 
@@ -621,308 +812,176 @@ export default function NovaPartidaPage() {
         </div>
       )}
 
-      {partidaAtual ? (
-        <section className="mb-5 overflow-hidden rounded-[1.5rem] border border-[#071A4A]/10 bg-[#090909] p-4 text-white shadow-2xl shadow-[#071A4A]/20 sm:mb-8 sm:rounded-[2rem] sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
+      <section className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
+        <div className="mb-5">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
+            Nova partida
+          </p>
+          <h2 className="mt-1 text-2xl font-black text-[#071A4A]">
+            Montar jogo
+          </h2>
+        </div>
+
+        {carregando ? (
+          <div className="flex min-h-32 items-center justify-center rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-5 text-sm font-bold text-slate-500">
+            <Loader2 size={18} className="mr-2 animate-spin" />
+            Carregando dados...
+          </div>
+        ) : (
+          <div className="grid gap-5">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-[#F4C542]">
-                Partida em andamento
-              </p>
-              <h2 className="mt-1 text-xl font-black">
-                {partidaAtual.tipo_partida} — até {partidaAtual.limite_pontos}
-              </h2>
-            </div>
-
-            <span className="rounded-full bg-green-500/15 px-3 py-1 text-xs font-black text-green-300">
-              Ao vivo
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 text-center">
-              <p className="min-h-12 text-2xl font-black leading-tight sm:text-4xl">
-                {timeANomes.join(" / ")}
-              </p>
-
-              <p className="my-5 text-7xl font-black tracking-tight sm:text-8xl">
-                {partidaAtual.placar_time_a}
-              </p>
-
-              <div className="grid gap-3">
-                <button
-                  type="button"
-                  disabled={salvando}
-                  onClick={() => marcarPonto("A", 1)}
-                  className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white px-4 py-3 text-lg font-black text-black transition active:scale-[0.99] disabled:opacity-50"
-                >
-                  <Plus size={22} /> 1
-                </button>
-
-                <button
-                  type="button"
-                  disabled={salvando}
-                  onClick={() => marcarPonto("A", -1)}
-                  className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
-                >
-                  <Minus size={18} /> 1
-                </button>
-              </div>
-            </div>
-
-            <div className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 text-center">
-              <p className="min-h-12 text-2xl font-black leading-tight sm:text-4xl">
-                {timeBNomes.join(" / ")}
-              </p>
-
-              <p className="my-5 text-7xl font-black tracking-tight sm:text-8xl">
-                {partidaAtual.placar_time_b}
-              </p>
-
-              <div className="grid gap-3">
-                <button
-                  type="button"
-                  disabled={salvando}
-                  onClick={() => marcarPonto("B", 1)}
-                  className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white px-4 py-3 text-lg font-black text-black transition active:scale-[0.99] disabled:opacity-50"
-                >
-                  <Plus size={22} /> 1
-                </button>
-
-                <button
-                  type="button"
-                  disabled={salvando}
-                  onClick={() => marcarPonto("B", -1)}
-                  className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
-                >
-                  <Minus size={18} /> 1
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={trucoVisual}
-            className="touch-button mt-5 inline-flex w-full items-center justify-center gap-3 rounded-2xl border border-white/30 bg-white/10 px-5 py-4 text-xl font-black text-white transition active:scale-[0.99]"
-          >
-            ❤️ Truuuco! ❤️
-          </button>
-
-          {(partidaAtual.placar_time_a >= limitePontos ||
-            partidaAtual.placar_time_b >= limitePontos) && (
-            <div className="mt-5 rounded-2xl border border-[#F4C542]/30 bg-[#F4C542]/10 p-4 text-sm font-bold text-[#F4C542]">
-              Um dos times chegou a 12 pontos. Já pode encerrar a partida.
-            </div>
-          )}
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            <button
-              type="button"
-              disabled={salvando}
-              onClick={desfazerUltimoPonto}
-              className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
-            >
-              <RotateCcw size={18} />
-              Desfazer ponto
-            </button>
-
-            <button
-              type="button"
-              disabled={salvando}
-              onClick={encerrarPartida}
-              className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
-            >
-              <Trophy size={18} />
-              Encerrar
-            </button>
-
-            <button
-              type="button"
-              disabled={salvando}
-              onClick={cancelarPartida}
-              className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-red-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
-            >
-              <XCircle size={18} />
-              Cancelar
-            </button>
-          </div>
-        </section>
-      ) : (
-        <section className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
-          <div className="mb-5">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
-              Nova partida
-            </p>
-            <h2 className="mt-1 text-2xl font-black text-[#071A4A]">
-              Montar jogo
-            </h2>
-          </div>
-
-          {carregando ? (
-            <div className="flex min-h-32 items-center justify-center rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-5 text-sm font-bold text-slate-500">
-              <Loader2 size={18} className="mr-2 animate-spin" />
-              Carregando dados...
-            </div>
-          ) : (
-            <div className="grid gap-5">
-              <div>
-                <label className="mb-2 block text-sm font-black text-[#071A4A]">
-                  Rodada aberta *
-                </label>
-                <select
-                  value={form.rodada_id}
-                  onChange={(event) =>
-                    setForm((atual) => ({
-                      ...atual,
-                      rodada_id: event.target.value,
-                    }))
-                  }
-                  className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#0B6B3A]"
-                >
-                  <option value="">Selecione uma rodada</option>
-                  {rodadas.map((rodada) => (
-                    <option key={rodada.id} value={rodada.id}>
-                      {formatarData(rodada.data)}{" "}
-                      {formatarHorario(rodada.horario)}
-                      {rodada.local ? ` — ${rodada.local}` : ""}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {rodadaSelecionada && (
-                <div className="rounded-2xl border border-green-600/20 bg-green-50 p-4 text-sm font-bold text-green-700">
-                  Rodada selecionada: {formatarData(rodadaSelecionada.data)}{" "}
-                  {rodadaSelecionada.local
-                    ? `— ${rodadaSelecionada.local}`
-                    : ""}
-                </div>
-              )}
-
-              <div>
-                <label className="mb-2 block text-sm font-black text-[#071A4A]">
-                  Tipo de partida
-                </label>
-
-                <div className="grid grid-cols-3 gap-2">
-                  {(["1x1", "2x2", "3x3"] as TipoPartida[]).map((tipo) => (
-                    <button
-                      key={tipo}
-                      type="button"
-                      onClick={() => alterarTipoPartida(tipo)}
-                      className={`touch-button rounded-2xl border px-4 py-3 text-sm font-black transition active:scale-[0.99] ${
-                        form.tipo_partida === tipo
-                          ? "border-[#0B6B3A] bg-[#0B6B3A] text-white"
-                          : "border-[#071A4A]/15 bg-[#FAF8F1] text-[#071A4A]"
-                      }`}
-                    >
-                      {tipo}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="grid gap-4 lg:grid-cols-2">
-                <div className="rounded-[1.25rem] border border-[#0B6B3A]/20 bg-green-50 p-4">
-                  <div className="mb-4 flex items-center gap-2">
-                    <Users size={18} className="text-[#0B6B3A]" />
-                    <h3 className="text-xl font-black text-[#071A4A]">
-                      Time A
-                    </h3>
-                  </div>
-
-                  <div className="grid gap-3">
-                    {form.time_a.map((jogadorId, index) => (
-                      <select
-                        key={`a-${index}`}
-                        value={jogadorId}
-                        onChange={(event) =>
-                          atualizarJogadorTime("A", index, event.target.value)
-                        }
-                        className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#0B6B3A]"
-                      >
-                        <option value="">Jogador A{index + 1}</option>
-                        {jogadoresAtivos.map((jogador) => (
-                          <option key={jogador.id} value={jogador.id}>
-                            {jogador.apelido || jogador.nome}
-                          </option>
-                        ))}
-                      </select>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-[1.25rem] border border-[#E6AA00]/30 bg-[#FFF7D7] p-4">
-                  <div className="mb-4 flex items-center gap-2">
-                    <Users size={18} className="text-[#5A3924]" />
-                    <h3 className="text-xl font-black text-[#071A4A]">
-                      Time B
-                    </h3>
-                  </div>
-
-                  <div className="grid gap-3">
-                    {form.time_b.map((jogadorId, index) => (
-                      <select
-                        key={`b-${index}`}
-                        value={jogadorId}
-                        onChange={(event) =>
-                          atualizarJogadorTime("B", index, event.target.value)
-                        }
-                        className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#0B6B3A]"
-                      >
-                        <option value="">Jogador B{index + 1}</option>
-                        {jogadoresAtivos.map((jogador) => (
-                          <option key={jogador.id} value={jogador.id}>
-                            {jogador.apelido || jogador.nome}
-                          </option>
-                        ))}
-                      </select>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {temJogadorRepetido && (
-                <div className="rounded-2xl border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700">
-                  Existe jogador repetido na partida. Escolha jogadores
-                  diferentes.
-                </div>
-              )}
-
-              <div>
-                <label className="mb-2 block text-sm font-black text-[#071A4A]">
-                  Observações
-                </label>
-                <input
-                  value={form.observacoes}
-                  onChange={(event) =>
-                    setForm((atual) => ({
-                      ...atual,
-                      observacoes: event.target.value,
-                    }))
-                  }
-                  placeholder="Ex: jogo valendo barriguinha de pinga"
-                  className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0B6B3A]"
-                />
-              </div>
-
-              <button
-                type="button"
-                onClick={iniciarPartida}
-                disabled={!podeIniciar || salvando}
-                className="touch-button inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-5 py-4 text-base font-black text-white shadow-lg shadow-[#0B6B3A]/20 transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:hover:bg-[#064527]"
+              <label className="mb-2 block text-sm font-black text-[#071A4A]">
+                Rodada aberta *
+              </label>
+              <select
+                value={form.rodada_id}
+                onChange={(event) =>
+                  setForm((atual) => ({
+                    ...atual,
+                    rodada_id: event.target.value,
+                  }))
+                }
+                className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#0B6B3A]"
               >
-                {salvando ? (
-                  <Loader2 size={20} className="animate-spin" />
-                ) : (
-                  <Save size={20} />
-                )}
-                Iniciar partida
-              </button>
+                <option value="">Selecione uma rodada</option>
+                {rodadas.map((rodada) => (
+                  <option key={rodada.id} value={rodada.id}>
+                    {formatarData(rodada.data)}{" "}
+                    {formatarHorario(rodada.horario)}
+                    {rodada.local ? ` — ${rodada.local}` : ""}
+                  </option>
+                ))}
+              </select>
             </div>
-          )}
-        </section>
-      )}
+
+            {rodadaSelecionada && (
+              <div className="rounded-2xl border border-green-600/20 bg-green-50 p-4 text-sm font-bold text-green-700">
+                Rodada selecionada: {formatarData(rodadaSelecionada.data)}{" "}
+                {rodadaSelecionada.local
+                  ? `— ${rodadaSelecionada.local}`
+                  : ""}
+              </div>
+            )}
+
+            <div>
+              <label className="mb-2 block text-sm font-black text-[#071A4A]">
+                Tipo de partida
+              </label>
+
+              <div className="grid grid-cols-3 gap-2">
+                {(["1x1", "2x2", "3x3"] as TipoPartida[]).map((tipo) => (
+                  <button
+                    key={tipo}
+                    type="button"
+                    onClick={() => alterarTipoPartida(tipo)}
+                    className={`touch-button rounded-2xl border px-4 py-3 text-sm font-black transition active:scale-[0.99] ${
+                      form.tipo_partida === tipo
+                        ? "border-[#0B6B3A] bg-[#0B6B3A] text-white"
+                        : "border-[#071A4A]/15 bg-[#FAF8F1] text-[#071A4A]"
+                    }`}
+                  >
+                    {tipo}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-[1.25rem] border border-[#0B6B3A]/20 bg-green-50 p-4">
+                <div className="mb-4 flex items-center gap-2">
+                  <Users size={18} className="text-[#0B6B3A]" />
+                  <h3 className="text-xl font-black text-[#071A4A]">Time A</h3>
+                </div>
+
+                <div className="grid gap-3">
+                  {form.time_a.map((jogadorId, index) => (
+                    <select
+                      key={`a-${index}`}
+                      value={jogadorId}
+                      onChange={(event) =>
+                        atualizarJogadorTime("A", index, event.target.value)
+                      }
+                      className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#0B6B3A]"
+                    >
+                      <option value="">Jogador A{index + 1}</option>
+                      {jogadoresAtivos.map((jogador) => (
+                        <option key={jogador.id} value={jogador.id}>
+                          {jogador.apelido || jogador.nome}
+                        </option>
+                      ))}
+                    </select>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[1.25rem] border border-[#E6AA00]/30 bg-[#FFF7D7] p-4">
+                <div className="mb-4 flex items-center gap-2">
+                  <Users size={18} className="text-[#5A3924]" />
+                  <h3 className="text-xl font-black text-[#071A4A]">Time B</h3>
+                </div>
+
+                <div className="grid gap-3">
+                  {form.time_b.map((jogadorId, index) => (
+                    <select
+                      key={`b-${index}`}
+                      value={jogadorId}
+                      onChange={(event) =>
+                        atualizarJogadorTime("B", index, event.target.value)
+                      }
+                      className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition focus:border-[#0B6B3A]"
+                    >
+                      <option value="">Jogador B{index + 1}</option>
+                      {jogadoresAtivos.map((jogador) => (
+                        <option key={jogador.id} value={jogador.id}>
+                          {jogador.apelido || jogador.nome}
+                        </option>
+                      ))}
+                    </select>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {temJogadorRepetido && (
+              <div className="rounded-2xl border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700">
+                Existe jogador repetido na partida. Escolha jogadores
+                diferentes.
+              </div>
+            )}
+
+            <div>
+              <label className="mb-2 block text-sm font-black text-[#071A4A]">
+                Observações
+              </label>
+              <input
+                value={form.observacoes}
+                onChange={(event) =>
+                  setForm((atual) => ({
+                    ...atual,
+                    observacoes: event.target.value,
+                  }))
+                }
+                placeholder="Ex: jogo valendo barriguinha de pinga"
+                className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0B6B3A]"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={iniciarPartida}
+              disabled={!podeIniciar || salvando}
+              className="touch-button inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-5 py-4 text-base font-black text-white shadow-lg shadow-[#0B6B3A]/20 transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 sm:hover:bg-[#064527]"
+            >
+              {salvando ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                <Save size={20} />
+              )}
+              Iniciar partida
+            </button>
+          </div>
+        )}
+      </section>
 
       <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
         <div className="mb-5">
