@@ -97,3 +97,33 @@ export type MensalidadeJogador = {
 export type MensalidadeComJogador = MensalidadeJogador & {
   jogador: Jogador | null;
 };
+export type CategoriaDespesaCaixa =
+  | "churrasco"
+  | "cerveja"
+  | "gelo"
+  | "carvao"
+  | "descartaveis"
+  | "trofeu"
+  | "outros";
+
+export type DespesaCaixa = {
+  id: string;
+  data_despesa: string;
+  categoria: CategoriaDespesaCaixa;
+  descricao: string;
+  valor: number;
+  jogador_responsavel_id: string | null;
+  enviado_para_jogador: boolean;
+  data_envio: string | null;
+  forma_envio: string | null;
+  recibo_url: string | null;
+  recibo_path: string | null;
+  recibo_nome: string | null;
+  observacoes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type DespesaCaixaComJogador = DespesaCaixa & {
+  jogador_responsavel: Jogador | null;
+};
