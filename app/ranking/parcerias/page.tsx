@@ -740,7 +740,7 @@ export default function RankingParceriasPage() {
           </div>
         )}
       </section>
-
+<div className="h-40 shrink-0 md:hidden" aria-hidden="true" />
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#071A4A]/10 bg-white/95 px-3 py-2 shadow-2xl shadow-[#071A4A]/20 backdrop-blur md:hidden">
         <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
           <Link

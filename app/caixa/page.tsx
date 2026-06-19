@@ -9,13 +9,17 @@ import {
   ChevronDown,
   ChevronRight,
   CircleDollarSign,
+  Home,
   Loader2,
   MessageCircle,
+  PlayCircle,
   ReceiptText,
   RefreshCw,
   Save,
   Search,
+  Trophy,
   Users,
+  Wallet,
   XCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
@@ -409,7 +413,7 @@ export default function CaixaPage() {
   }
 
   return (
-    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-28 pt-5 sm:px-6 sm:pb-8 lg:px-8">
+    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-64 pt-5 md:pb-8 sm:px-6 lg:px-8">
       <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
         <div className="mb-4 flex flex-wrap gap-2">
           <Link
@@ -705,9 +709,9 @@ export default function CaixaPage() {
                   return (
                     <article
                       key={mensalidade.id}
-                      className="rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-4"
+                      className="w-full overflow-hidden rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-3 sm:p-4"
                     >
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="text-xl font-black text-[#071A4A]">
@@ -744,14 +748,14 @@ export default function CaixaPage() {
                           )}
                         </div>
 
-                        <div className="grid gap-2 sm:grid-cols-2 lg:min-w-[430px]">
+                        <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:w-auto lg:min-w-[430px]">
                           <button
                             type="button"
                             disabled={salvando}
                             onClick={() =>
                               atualizarStatus(mensalidade, "pago", "Pix")
                             }
-                            className="touch-button rounded-2xl bg-green-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
+                            className="touch-button flex min-h-12 w-full items-center justify-center rounded-2xl bg-green-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
                           >
                             Marcar pago
                           </button>
@@ -762,7 +766,7 @@ export default function CaixaPage() {
                             onClick={() =>
                               atualizarStatus(mensalidade, "pendente")
                             }
-                            className="touch-button rounded-2xl bg-red-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
+                            className="touch-button flex min-h-12 w-full items-center justify-center rounded-2xl bg-red-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99] disabled:opacity-50"
                           >
                             Pendente
                           </button>
@@ -773,7 +777,7 @@ export default function CaixaPage() {
                             onClick={() =>
                               atualizarStatus(mensalidade, "isento")
                             }
-                            className="touch-button rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99] disabled:opacity-50"
+                            className="touch-button flex min-h-12 w-full items-center justify-center rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99] disabled:opacity-50"
                           >
                             Isentar
                           </button>
@@ -783,7 +787,7 @@ export default function CaixaPage() {
                               href={whatsappLink}
                               target="_blank"
                               rel="noreferrer"
-                              className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-4 py-3 text-sm font-black text-white transition active:scale-[0.99]"
+                              className="touch-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-[#0B6B3A] px-4 py-3 text-sm font-black text-white transition active:scale-[0.99]"
                             >
                               <MessageCircle size={18} />
                               Cobrar
@@ -792,7 +796,7 @@ export default function CaixaPage() {
                             <button
                               type="button"
                               disabled
-                              className="touch-button rounded-2xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-black text-slate-400"
+                              className="touch-button min-h-12 w-full rounded-2xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-black text-slate-400"
                             >
                               Sem WhatsApp
                             </button>
@@ -809,7 +813,7 @@ export default function CaixaPage() {
                               alterarValor(mensalidade, valor);
                             }}
                           >
-                            <div className="grid grid-cols-[1fr_auto] gap-2">
+                            <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
                               <input
                                 name="valor"
                                 defaultValue={String(
@@ -822,7 +826,7 @@ export default function CaixaPage() {
                               <button
                                 type="submit"
                                 disabled={salvando}
-                                className="touch-button rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99] disabled:opacity-50"
+                                className="touch-button flex min-h-12 w-full items-center justify-center rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99] disabled:opacity-50 sm:w-auto"
                               >
                                 Valor
                               </button>
@@ -838,6 +842,44 @@ export default function CaixaPage() {
           </>
         )}
       </section>
+
+      <div className="h-40 shrink-0 md:hidden" aria-hidden="true" />
+
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#071A4A]/10 bg-white/95 px-3 py-2 shadow-2xl shadow-[#071A4A]/20 backdrop-blur md:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
+          <Link
+            href="/"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Home size={20} />
+            <span className="mt-1 text-[10px] font-black">Início</span>
+          </Link>
+
+          <Link
+            href="/partidas/nova"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <PlayCircle size={20} />
+            <span className="mt-1 text-[10px] font-black">Partida</span>
+          </Link>
+
+          <Link
+            href="/ranking"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Trophy size={20} />
+            <span className="mt-1 text-[10px] font-black">Ranking</span>
+          </Link>
+
+          <Link
+            href="/caixa"
+            className="flex flex-col items-center justify-center rounded-2xl bg-[#FAF8F1] px-2 py-2 text-[#071A4A]"
+          >
+            <Wallet size={20} />
+            <span className="mt-1 text-[10px] font-black">Caixa</span>
+          </Link>
+        </div>
+      </nav>
     </main>
   );
 }
