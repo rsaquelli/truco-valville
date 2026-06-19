@@ -8,3 +8,16 @@ export type Jogador = {
   created_at: string;
   updated_at: string;
 };
+
+export type StatusRodada = "aberta" | "encerrada" | "cancelada";
+
+export type Rodada = {
+  id: string;
+  data: string;
+  horario: string | null;
+  local: string | null;
+  observacoes: string | null;
+  status: StatusRodada;
+  created_at: string;
+  updated_at: string;
+};
