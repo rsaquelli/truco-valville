@@ -4,12 +4,19 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
+  BarChart3,
+  CalendarDays,
   Handshake,
+  Home,
   Loader2,
+  Medal,
+  PlayCircle,
   RefreshCw,
   Search,
   Trophy,
   Users,
+  Wallet,
+  XCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type {
@@ -54,7 +61,8 @@ function formatarData(data: string | null | undefined) {
   return `${dia}/${mes}/${ano}`;
 }
 
-function nomeJogador(jogador: Jogador) {
+function nomeJogador(jogador: Jogador | null | undefined) {
+  if (!jogador) return "-";
   return jogador.apelido || jogador.nome;
 }
 
@@ -256,22 +264,38 @@ function calcularParcerias(
 }
 
 function descricaoFiltro(filtro: FiltroRanking, rodadaSelecionada: Rodada | null) {
-  if (filtro === "geral") return "Todas as partidas encerradas.";
-  if (filtro === "ano") return "Partidas encerradas no ano atual.";
-  if (filtro === "mes") return "Partidas encerradas no mês atual.";
-  if (filtro === "semana") return "Partidas encerradas na semana atual.";
+  if (filtro === "geral") return "Todas as partidas encerradas";
+  if (filtro === "ano") return "Partidas encerradas no ano atual";
+  if (filtro === "mes") return "Partidas encerradas no mês atual";
+  if (filtro === "semana") return "Partidas encerradas na semana atual";
 
   if (rodadaSelecionada) {
     return `Rodada de ${formatarData(rodadaSelecionada.data)}${
       rodadaSelecionada.local ? ` — ${rodadaSelecionada.local}` : ""
-    }.`;
+    }`;
   }
 
-  return "Todas as rodadas cadastradas.";
+  return "Todas as rodadas";
 }
 
 function nomeParceria(parceria: RankingParceria) {
-  return `${nomeJogador(parceria.jogador1)} + ${nomeJogador(parceria.jogador2)}`;
+  return `${nomeJogador(parceria.jogador1)} + ${nomeJogador(
+    parceria.jogador2
+  )}`;
+}
+
+function medalha(posicao: number) {
+  if (posicao === 1) return "🥇";
+  if (posicao === 2) return "🥈";
+  if (posicao === 3) return "🥉";
+  return `${posicao}`;
+}
+
+function classePosicao(posicao: number) {
+  if (posicao === 1) return "bg-[#E6AA00] text-[#071A4A]";
+  if (posicao === 2) return "bg-slate-200 text-slate-700";
+  if (posicao === 3) return "bg-[#5A3924] text-white";
+  return "bg-white text-[#071A4A]";
 }
 
 export default function RankingParceriasPage() {
@@ -419,118 +443,72 @@ export default function RankingParceriasPage() {
 
   return (
     <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-28 pt-5 sm:px-6 sm:pb-8 lg:px-8">
-      <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
+      <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
         <div className="mb-4 flex flex-wrap gap-2">
           <Link
-            href="/"
+            href="/ranking"
             className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
           >
             <ArrowLeft size={18} />
-            Início
+            Ranking
           </Link>
 
           <Link
-            href="/ranking"
+            href="/"
             className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-white px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
           >
-            <Trophy size={18} />
-            Ranking individual
+            <Home size={18} />
+            Início
           </Link>
-        </div>
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
-              <Handshake size={15} />
-              Etapa 6
-            </div>
-
-            <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
-              Zoação e Parcerias
-            </h1>
-
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 sm:text-base">
-              Veja melhores e piores parcerias, maior vencedor e mais derrotado
-              por período. Aqui começa a parte da resenha.
-            </p>
-          </div>
 
           <button
             type="button"
             onClick={carregarDados}
-            className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl border border-[#071A4A]/15 bg-white px-5 py-3 text-sm font-black text-[#071A4A] shadow-lg shadow-[#071A4A]/5 transition active:scale-[0.99] sm:hover:border-[#E6AA00]/50 sm:hover:bg-[#FAF8F1]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-white px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
           >
             <RefreshCw size={18} />
             Atualizar
           </button>
         </div>
+
+        <div>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
+            <Handshake size={15} />
+            Parcerias
+          </div>
+
+          <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
+            Ranking de parcerias
+          </h1>
+
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-700 sm:text-base">
+            Melhores duplas, piores combinações e estatísticas de zoeira do
+            truco.
+          </p>
+        </div>
       </header>
 
       {erro && (
-        <div className="mb-4 rounded-2xl border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700">
-          {erro}
+        <div className="mb-4 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700">
+          <XCircle size={18} className="mt-0.5 shrink-0" />
+          <span>{erro}</span>
         </div>
       )}
 
-      <section className="mb-5 grid gap-4 sm:mb-8 lg:grid-cols-4">
-        <div className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
-          <p className="text-sm font-black text-slate-500">Partidas no filtro</p>
-          <p className="mt-1 text-3xl font-black text-[#071A4A] sm:text-4xl">
-            {partidasConsideradas.length}
-          </p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Somente encerradas.
-          </p>
-        </div>
+      <section className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
+        <div className="mb-4 flex items-start gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#E6AA00] text-[#071A4A]">
+            <CalendarDays size={22} />
+          </div>
 
-        <div className="rounded-[1.5rem] border border-[#E6AA00]/30 bg-[#FFF7D7] p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
-          <p className="text-sm font-black text-[#5A3924]">Melhor parceria</p>
-          <p className="mt-1 truncate text-2xl font-black text-[#071A4A]">
-            {melhorParceria ? nomeParceria(melhorParceria) : "-"}
-          </p>
-          <p className="mt-2 text-sm leading-6 text-[#5A3924]">
-            {melhorParceria
-              ? `${melhorParceria.aproveitamento}% em ${melhorParceria.jogos} jogo(s)`
-              : "Mínimo de 2 jogos juntos."}
-          </p>
-        </div>
-
-        <div className="rounded-[1.5rem] border border-green-600/20 bg-green-50 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
-          <p className="text-sm font-black text-green-700">Mais vencedor</p>
-          <p className="mt-1 truncate text-2xl font-black text-green-800">
-            {maisVencedor ? nomeJogador(maisVencedor.jogador) : "-"}
-          </p>
-          <p className="mt-2 text-sm leading-6 text-green-700/80">
-            {maisVencedor
-              ? `${maisVencedor.vitorias} vitória(s)`
-              : "Sem jogos no filtro."}
-          </p>
-        </div>
-
-        <div className="rounded-[1.5rem] border border-red-500/10 bg-red-50 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
-          <p className="text-sm font-black text-red-600">Mais derrotado</p>
-          <p className="mt-1 truncate text-2xl font-black text-red-700">
-            {maisDerrotado ? nomeJogador(maisDerrotado.jogador) : "-"}
-          </p>
-          <p className="mt-2 text-sm leading-6 text-red-700/80">
-            {maisDerrotado
-              ? `${maisDerrotado.derrotas} derrota(s)`
-              : "Sem zoeira ainda."}
-          </p>
-        </div>
-      </section>
-
-      <section className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
-        <div className="mb-5">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
-            Filtros
-          </p>
-          <h2 className="mt-1 text-2xl font-black text-[#071A4A]">
-            Período da zoeira
-          </h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-            {descricaoFiltro(filtro, rodadaSelecionada)}
-          </p>
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
+              Filtro
+            </p>
+            <h2 className="text-2xl font-black text-[#071A4A]">
+              {descricaoFiltro(filtro, rodadaSelecionada)}
+            </h2>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
@@ -538,10 +516,16 @@ export default function RankingParceriasPage() {
             <button
               key={item.id}
               type="button"
-              onClick={() => setFiltro(item.id)}
-              className={`touch-button rounded-2xl border px-4 py-3 text-sm font-black transition active:scale-[0.99] ${
+              onClick={() => {
+                setFiltro(item.id);
+
+                if (item.id !== "rodada") {
+                  setRodadaIdSelecionada("");
+                }
+              }}
+              className={`touch-button min-h-12 rounded-2xl border px-3 py-3 text-sm font-black transition active:scale-[0.99] ${
                 filtro === item.id
-                  ? "border-[#0B6B3A] bg-[#0B6B3A] text-white"
+                  ? "border-[#0B6B3A] bg-[#0B6B3A] text-white shadow-lg shadow-[#0B6B3A]/20"
                   : "border-[#071A4A]/15 bg-[#FAF8F1] text-[#071A4A]"
               }`}
             >
@@ -579,52 +563,100 @@ export default function RankingParceriasPage() {
           <input
             value={busca}
             onChange={(event) => setBusca(event.target.value)}
-            placeholder="Buscar jogador ou parceria"
+            placeholder="Buscar jogador ou dupla"
             className="min-h-12 w-full rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] py-3 pl-11 pr-4 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-[#0B6B3A]"
           />
         </label>
       </section>
 
-      <section className="mb-5 grid gap-4 sm:mb-8 lg:grid-cols-2">
-        <div className="rounded-[1.5rem] border border-[#E6AA00]/30 bg-[#FFF7D7] p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
-          <p className="text-sm font-black text-[#5A3924]">
-            Melhor parceria oficial
+      <section className="mb-5 grid gap-4 sm:mb-8 lg:grid-cols-4">
+        <div className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
+          <p className="text-sm font-black text-slate-500">
+            Partidas no filtro
           </p>
-          <h2 className="mt-2 text-2xl font-black text-[#071A4A]">
+          <p className="mt-1 text-3xl font-black text-[#071A4A] sm:text-4xl">
+            {partidasConsideradas.length}
+          </p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+            Somente partidas encerradas.
+          </p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-[#E6AA00]/30 bg-[#FFF7D7] p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
+          <p className="flex items-center gap-2 text-sm font-black text-[#5A3924]">
+            <Medal size={16} />
+            Melhor dupla
+          </p>
+          <p className="mt-1 text-2xl font-black leading-tight text-[#071A4A]">
             {melhorParceria ? nomeParceria(melhorParceria) : "-"}
-          </h2>
+          </p>
           <p className="mt-2 text-sm font-semibold leading-6 text-[#5A3924]">
             {melhorParceria
-              ? `${melhorParceria.vitorias} vitória(s), ${melhorParceria.derrotas} derrota(s), ${melhorParceria.aproveitamento}% de aproveitamento.`
-              : "Ainda não existe parceria com pelo menos 2 jogos no filtro."}
+              ? `${melhorParceria.aproveitamento}% · ${melhorParceria.vitorias} vitória(s)`
+              : "Mínimo de 2 jogos."}
           </p>
         </div>
 
         <div className="rounded-[1.5rem] border border-red-500/10 bg-red-50 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
           <p className="text-sm font-black text-red-600">Pior parceria</p>
-          <h2 className="mt-2 text-2xl font-black text-red-700">
+          <p className="mt-1 text-2xl font-black leading-tight text-red-700">
             {piorParceria ? nomeParceria(piorParceria) : "-"}
-          </h2>
+          </p>
           <p className="mt-2 text-sm font-semibold leading-6 text-red-700/80">
             {piorParceria
-              ? `${piorParceria.vitorias} vitória(s), ${piorParceria.derrotas} derrota(s), ${piorParceria.aproveitamento}% de aproveitamento.`
-              : "Ainda não existe parceria com pelo menos 2 jogos no filtro."}
+              ? `${piorParceria.aproveitamento}% · ${piorParceria.derrotas} derrota(s)`
+              : "Mínimo de 2 jogos."}
+          </p>
+        </div>
+
+        <div className="rounded-[1.5rem] border border-green-600/20 bg-green-50 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
+          <p className="text-sm font-black text-green-700">Mais vencedor</p>
+          <p className="mt-1 truncate text-2xl font-black text-green-800">
+            {maisVencedor ? nomeJogador(maisVencedor.jogador) : "-"}
+          </p>
+          <p className="mt-2 text-sm font-semibold leading-6 text-green-700/80">
+            {maisVencedor
+              ? `${maisVencedor.vitorias} vitória(s)`
+              : "Sem jogos."}
           </p>
         </div>
       </section>
 
-      <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
+      {maisDerrotado && (
+        <section className="mb-5 rounded-[1.5rem] border border-red-500/10 bg-red-50 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
+          <div className="flex items-start gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-red-600 text-white">
+              <Trophy size={22} />
+            </div>
+
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-red-600">
+                Zoeira permitida
+              </p>
+              <h2 className="text-2xl font-black text-red-700">
+                Mais derrotado: {nomeJogador(maisDerrotado.jogador)}
+              </h2>
+              <p className="mt-1 text-sm font-semibold leading-6 text-red-700/80">
+                {maisDerrotado.derrotas} derrota(s), {maisDerrotado.jogos} jogo(s)
+                e {maisDerrotado.aproveitamento}% de aproveitamento.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
         <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#E6AA00] text-[#071A4A]">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#0B6B3A] text-white">
             <Users size={22} />
           </div>
 
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
-              Classificação
+              Duplas
             </p>
             <h2 className="text-2xl font-black text-[#071A4A]">
-              Ranking de parcerias
+              Classificação das parcerias
             </h2>
           </div>
         </div>
@@ -636,17 +668,16 @@ export default function RankingParceriasPage() {
           </div>
         ) : parceriasFiltradas.length === 0 ? (
           <div className="rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-5 text-sm font-bold text-slate-500">
-            Nenhuma parceria encontrada. Em partidas 1x1 não há parceria para
-            calcular.
+            Nenhuma parceria encontrada neste filtro.
           </div>
         ) : (
           <div className="grid gap-3">
-            {parceriasFiltradas.map((item, index) => {
+            {parceriasFiltradas.map((parceria, index) => {
               const posicao = index + 1;
 
               return (
                 <article
-                  key={item.chave}
+                  key={parceria.chave}
                   className={`rounded-2xl border p-4 ${
                     posicao === 1
                       ? "border-[#E6AA00]/50 bg-[#FFF7D7]"
@@ -654,44 +685,51 @@ export default function RankingParceriasPage() {
                   }`}
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-sm font-black text-slate-500">
-                        #{posicao}
-                      </p>
-                      <h3 className="text-xl font-black text-[#071A4A]">
-                        {nomeParceria(item)}
-                      </h3>
-                      <p className="mt-1 text-sm font-semibold text-slate-600">
-                        {item.jogos} jogo(s) juntos
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-black ${classePosicao(
+                          posicao
+                        )}`}
+                      >
+                        {medalha(posicao)}
+                      </div>
+
+                      <div className="min-w-0">
+                        <h3 className="text-xl font-black leading-tight text-[#071A4A]">
+                          {nomeParceria(parceria)}
+                        </h3>
+                        <p className="mt-1 text-sm font-semibold text-slate-600">
+                          {parceria.jogos} jogo(s)
+                        </p>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-4 gap-2 sm:min-w-[420px]">
                       <div className="rounded-2xl bg-white p-3 text-center">
                         <p className="text-xs font-black text-slate-500">V</p>
                         <p className="text-2xl font-black text-green-700">
-                          {item.vitorias}
+                          {parceria.vitorias}
                         </p>
                       </div>
 
                       <div className="rounded-2xl bg-white p-3 text-center">
                         <p className="text-xs font-black text-slate-500">D</p>
                         <p className="text-2xl font-black text-red-700">
-                          {item.derrotas}
+                          {parceria.derrotas}
                         </p>
                       </div>
 
                       <div className="rounded-2xl bg-white p-3 text-center">
                         <p className="text-xs font-black text-slate-500">J</p>
                         <p className="text-2xl font-black text-[#071A4A]">
-                          {item.jogos}
+                          {parceria.jogos}
                         </p>
                       </div>
 
                       <div className="rounded-2xl bg-white p-3 text-center">
                         <p className="text-xs font-black text-slate-500">%</p>
                         <p className="text-2xl font-black text-[#071A4A]">
-                          {item.aproveitamento}
+                          {parceria.aproveitamento}
                         </p>
                       </div>
                     </div>
@@ -702,6 +740,42 @@ export default function RankingParceriasPage() {
           </div>
         )}
       </section>
+
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#071A4A]/10 bg-white/95 px-3 py-2 shadow-2xl shadow-[#071A4A]/20 backdrop-blur md:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
+          <Link
+            href="/"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Home size={20} />
+            <span className="mt-1 text-[10px] font-black">Início</span>
+          </Link>
+
+          <Link
+            href="/partidas/nova"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <PlayCircle size={20} />
+            <span className="mt-1 text-[10px] font-black">Partida</span>
+          </Link>
+
+          <Link
+            href="/ranking"
+            className="flex flex-col items-center justify-center rounded-2xl bg-[#FAF8F1] px-2 py-2 text-[#071A4A]"
+          >
+            <Trophy size={20} />
+            <span className="mt-1 text-[10px] font-black">Ranking</span>
+          </Link>
+
+          <Link
+            href="/caixa"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Wallet size={20} />
+            <span className="mt-1 text-[10px] font-black">Caixa</span>
+          </Link>
+        </div>
+      </nav>
     </main>
   );
 }
