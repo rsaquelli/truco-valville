@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #faf8f1;
+  --foreground: #111827;
+
+  --verde-valville: #0b6b3a;
+  --verde-escuro: #064527;
+  --azul-valville: #071a4a;
+  --dourado-valville: #e6aa00;
+  --dourado-claro: #f4c542;
+  --marrom-valville: #5a3924;
+  --off-white: #faf8f1;
+  --branco-card: rgba(255, 255, 255, 0.92);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(230, 170, 0, 0.18), transparent 28rem),
+    radial-gradient(circle at bottom right, rgba(11, 107, 58, 0.14), transparent 30rem),
+    linear-gradient(180deg, #fffdf7 0%, #faf8f1 42%, #f4efe2 100%);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  overscroll-behavior-y: none;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+::selection {
+  background: var(--dourado-valville);
+  color: var(--azul-valville);
+}
+
+.card-valville {
+  background: var(--branco-card);
+  border: 1px solid rgba(7, 26, 74, 0.1);
+  box-shadow: 0 18px 45px rgba(7, 26, 74, 0.08);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.touch-button {
+  min-height: 48px;
+}
+
+.app-shell {
+  min-height: 100dvh;
+}
+
+@media (display-mode: standalone) {
+  body {
+    background:
+      radial-gradient(circle at top left, rgba(230, 170, 0, 0.16), transparent 24rem),
+      linear-gradient(180deg, #fffdf7 0%, #faf8f1 100%);
+  }
 }
