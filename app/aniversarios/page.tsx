@@ -6,10 +6,15 @@ import {
   ArrowLeft,
   Cake,
   CheckCircle2,
+  Home,
   Loader2,
   MessageCircle,
+  PlayCircle,
   RefreshCw,
   Search,
+  Trophy,
+  Wallet,
+  XCircle,
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import type { Jogador } from "@/types/truco";
@@ -185,53 +190,55 @@ export default function AniversariosPage() {
     try {
       await navigator.clipboard.writeText(montarMensagem(jogador));
       setMensagemCopiada(`Mensagem copiada para ${nomeJogador(jogador)}.`);
+      setErro(null);
     } catch {
       setErro("Não foi possível copiar a mensagem.");
     }
   }
 
   return (
-    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-28 pt-5 sm:px-6 sm:pb-8 lg:px-8">
-      <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
-        <Link
-          href="/"
-          className="mb-4 inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
-        >
-          <ArrowLeft size={18} />
-          Voltar
-        </Link>
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
-              <Cake size={15} />
-              Etapa 7
-            </div>
-
-            <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
-              Aniversários
-            </h1>
-
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-700 sm:text-base">
-              Controle os aniversariantes do grupo e gere mensagem pronta para
-              WhatsApp com a resenha do truco.
-            </p>
-          </div>
+    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-64 pt-5 md:pb-8 sm:px-6 lg:px-8">
+      <header className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem] sm:p-6">
+        <div className="mb-4 flex flex-wrap gap-2">
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
+          >
+            <ArrowLeft size={18} />
+            Voltar
+          </Link>
 
           <button
             type="button"
             onClick={carregarJogadores}
-            className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl border border-[#071A4A]/15 bg-white px-5 py-3 text-sm font-black text-[#071A4A] shadow-lg shadow-[#071A4A]/5 transition active:scale-[0.99] sm:hover:border-[#E6AA00]/50 sm:hover:bg-[#FAF8F1]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-white px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
           >
             <RefreshCw size={18} />
             Atualizar
           </button>
         </div>
+
+        <div>
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[#E6AA00]/35 bg-[#E6AA00]/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[#5A3924] sm:text-xs">
+            <Cake size={15} />
+            Aniversários
+          </div>
+
+          <h1 className="text-3xl font-black tracking-tight text-[#071A4A] sm:text-5xl">
+            Aniversários
+          </h1>
+
+          <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-700 sm:text-base">
+            Controle os aniversariantes do grupo e gere mensagem pronta para
+            WhatsApp com a resenha do truco.
+          </p>
+        </div>
       </header>
 
       {erro && (
-        <div className="mb-4 rounded-2xl border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700">
-          {erro}
+        <div className="mb-4 flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-50 p-4 text-sm font-bold text-red-700">
+          <XCircle size={18} className="mt-0.5 shrink-0" />
+          <span>{erro}</span>
         </div>
       )}
 
@@ -243,14 +250,14 @@ export default function AniversariosPage() {
       )}
 
       <section className="mb-5 grid gap-4 sm:mb-8 lg:grid-cols-3">
-        <div className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
+        <div className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-5">
           <p className="text-sm font-black text-slate-500">
             Aniversariantes hoje
           </p>
           <p className="mt-1 text-3xl font-black text-[#071A4A] sm:text-4xl">
             {aniversariosHoje.length}
           </p>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
+          <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
             {aniversariosHoje.length > 0
               ? "Hoje tem parabéns e zoeira."
               : "Nenhum aniversário hoje."}
@@ -266,10 +273,10 @@ export default function AniversariosPage() {
               ? nomeJogador(proximoAniversario.jogador)
               : "-"}
           </p>
-          <p className="mt-2 text-sm leading-6 text-[#5A3924]">
+          <p className="mt-2 text-sm font-semibold leading-6 text-[#5A3924]">
             {proximoAniversario
               ? proximoAniversario.hoje
-                ? "É hoje!"
+                ? "É hoje! 🎂"
                 : `Faltam ${proximoAniversario.diasParaAniversario} dia(s).`
               : "Cadastre datas de nascimento."}
           </p>
@@ -280,7 +287,7 @@ export default function AniversariosPage() {
           <p className="mt-1 text-3xl font-black text-green-800 sm:text-4xl">
             {aniversariantesDoMes.length}
           </p>
-          <p className="mt-2 text-sm leading-6 text-green-700/80">
+          <p className="mt-2 text-sm font-semibold leading-6 text-green-700/80">
             Aniversariantes do mês atual.
           </p>
         </div>
@@ -304,35 +311,45 @@ export default function AniversariosPage() {
               return (
                 <article
                   key={item.jogador.id}
-                  className="rounded-2xl border border-[#E6AA00]/30 bg-white p-4"
+                  className="w-full overflow-hidden rounded-2xl border border-[#E6AA00]/30 bg-white p-4"
                 >
                   <h3 className="text-xl font-black text-[#071A4A]">
                     🎂 {nomeJogador(item.jogador)}
                   </h3>
 
-                  <p className="mt-1 text-sm font-semibold text-slate-600">
-                    {item.jogador.nome}
-                  </p>
+                  {item.jogador.apelido && (
+                    <p className="mt-1 text-sm font-semibold text-slate-600">
+                      {item.jogador.nome}
+                    </p>
+                  )}
 
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     <button
                       type="button"
                       onClick={() => copiarMensagem(item.jogador)}
-                      className="touch-button rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99]"
+                      className="touch-button flex min-h-12 w-full items-center justify-center rounded-2xl border border-[#071A4A]/15 bg-[#FAF8F1] px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99]"
                     >
                       Copiar mensagem
                     </button>
 
-                    {whatsappLink && (
+                    {whatsappLink ? (
                       <a
                         href={whatsappLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-green-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99]"
+                        className="touch-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-green-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99]"
                       >
                         <MessageCircle size={18} />
                         Enviar WhatsApp
                       </a>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        className="touch-button min-h-12 w-full rounded-2xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-black text-slate-400"
+                      >
+                        Sem WhatsApp
+                      </button>
                     )}
                   </div>
                 </article>
@@ -342,7 +359,7 @@ export default function AniversariosPage() {
         </section>
       )}
 
-      <section className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
+      <section className="mb-5 rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[1.75rem] sm:p-6">
         <div className="mb-5">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-[#0B6B3A]">
             Busca
@@ -366,7 +383,7 @@ export default function AniversariosPage() {
         </label>
       </section>
 
-      <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/90 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
+      <section className="rounded-[1.5rem] border border-[#071A4A]/10 bg-white/95 p-4 shadow-xl shadow-[#071A4A]/5 sm:rounded-[1.75rem] sm:p-6">
         {carregando ? (
           <div className="flex min-h-32 items-center justify-center rounded-2xl border border-[#071A4A]/10 bg-[#FAF8F1] p-5 text-sm font-bold text-slate-500">
             <Loader2 size={18} className="mr-2 animate-spin" />
@@ -386,27 +403,27 @@ export default function AniversariosPage() {
               return (
                 <article
                   key={item.jogador.id}
-                  className={`rounded-2xl border p-4 ${
+                  className={`w-full overflow-hidden rounded-2xl border p-4 ${
                     item.hoje
                       ? "border-[#E6AA00]/50 bg-[#FFF7D7]"
                       : "border-[#071A4A]/10 bg-[#FAF8F1]"
                   }`}
                 >
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <h3 className="text-xl font-black text-[#071A4A]">
+                  <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-xl font-black text-[#071A4A]">
                         {item.hoje ? "🎂 " : ""}
                         {nomeJogador(item.jogador)}
                       </h3>
 
                       {item.jogador.apelido && (
-                        <p className="mt-1 text-sm font-semibold text-slate-600">
+                        <p className="mt-1 truncate text-sm font-semibold text-slate-600">
                           {item.jogador.nome}
                         </p>
                       )}
 
-                      <p className="mt-2 text-sm font-semibold text-slate-600">
-                        Nascimento:{" "}
+                      <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+                        Nascimento: {" "}
                         <strong className="text-slate-800">
                           {formatarDataNascimento(
                             item.jogador.data_nascimento
@@ -415,15 +432,15 @@ export default function AniversariosPage() {
                         {idade !== null ? ` — ${idade} anos` : ""}
                       </p>
 
-                      <p className="mt-1 text-sm font-semibold text-slate-600">
-                        Próximo aniversário:{" "}
+                      <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
+                        Próximo aniversário: {" "}
                         <strong className="text-slate-800">
                           {formatarDiaMes(item.proximaData)}
                         </strong>
                       </p>
                     </div>
 
-                    <div className="grid gap-2 sm:min-w-56">
+                    <div className="grid w-full min-w-0 grid-cols-1 gap-2 sm:w-auto sm:min-w-56">
                       <span className="rounded-2xl bg-white px-4 py-3 text-center text-sm font-black text-[#071A4A]">
                         {item.hoje
                           ? "É hoje!"
@@ -433,21 +450,29 @@ export default function AniversariosPage() {
                       <button
                         type="button"
                         onClick={() => copiarMensagem(item.jogador)}
-                        className="touch-button rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99]"
+                        className="touch-button flex min-h-12 w-full items-center justify-center rounded-2xl border border-[#071A4A]/15 bg-white px-4 py-3 text-sm font-black text-[#071A4A] transition active:scale-[0.99]"
                       >
                         Copiar msg
                       </button>
 
-                      {whatsappLink && (
+                      {whatsappLink ? (
                         <a
                           href={whatsappLink}
                           target="_blank"
                           rel="noreferrer"
-                          className="touch-button inline-flex items-center justify-center gap-2 rounded-2xl bg-green-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99]"
+                          className="touch-button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-green-600 px-4 py-3 text-sm font-black text-white transition active:scale-[0.99]"
                         >
                           <MessageCircle size={18} />
                           WhatsApp
                         </a>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled
+                          className="touch-button min-h-12 w-full rounded-2xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm font-black text-slate-400"
+                        >
+                          Sem WhatsApp
+                        </button>
                       )}
                     </div>
                   </div>
@@ -457,6 +482,44 @@ export default function AniversariosPage() {
           </div>
         )}
       </section>
+
+      <div className="h-40 shrink-0 md:hidden" aria-hidden="true" />
+
+      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#071A4A]/10 bg-white/95 px-3 py-2 shadow-2xl shadow-[#071A4A]/20 backdrop-blur md:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
+          <Link
+            href="/"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Home size={20} />
+            <span className="mt-1 text-[10px] font-black">Início</span>
+          </Link>
+
+          <Link
+            href="/partidas/nova"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <PlayCircle size={20} />
+            <span className="mt-1 text-[10px] font-black">Partida</span>
+          </Link>
+
+          <Link
+            href="/ranking"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Trophy size={20} />
+            <span className="mt-1 text-[10px] font-black">Ranking</span>
+          </Link>
+
+          <Link
+            href="/caixa"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-2 text-[#071A4A]"
+          >
+            <Wallet size={20} />
+            <span className="mt-1 text-[10px] font-black">Caixa</span>
+          </Link>
+        </div>
+      </nav>
     </main>
   );
 }
