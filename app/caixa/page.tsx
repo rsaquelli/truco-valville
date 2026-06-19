@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
+  CalendarDays,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
@@ -425,6 +426,14 @@ export default function CaixaPage() {
           >
             <ReceiptText size={18} />
             Despesas
+          </Link>
+
+          <Link
+            href="/caixa/historico"
+            className="inline-flex min-h-11 items-center gap-2 rounded-2xl border border-[#071A4A]/10 bg-white px-4 py-2 text-sm font-black text-[#071A4A] transition active:scale-[0.99] sm:hover:border-[#E6AA00]/60"
+          >
+            <CalendarDays size={18} />
+            Histórico
           </Link>
         </div>
 
