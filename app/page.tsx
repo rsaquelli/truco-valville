@@ -10,6 +10,7 @@ import {
   PlayCircle,
   ReceiptText,
   Settings,
+  Smartphone,
   Trophy,
   Users,
   Wallet,
@@ -43,6 +44,12 @@ const atalhosPrincipais = [
 ];
 
 const atalhosSecundarios = [
+  {
+    titulo: "Instalar app",
+    descricao: "Adicione o Truco Valville na tela inicial do celular.",
+    href: "/instalar",
+    icone: Smartphone,
+  },
   {
     titulo: "Parcerias",
     descricao: "Melhores e piores duplas do truco.",
@@ -83,7 +90,7 @@ const atalhosSecundarios = [
 
 export default function HomePage() {
   return (
-    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-28 pt-5 sm:px-6 sm:pb-8 lg:px-8">
+    <main className="app-shell safe-bottom mx-auto flex w-full max-w-6xl flex-col px-4 pb-64 pt-5 md:pb-8 sm:px-6 lg:px-8">
       <section className="mb-5 overflow-hidden rounded-[1.75rem] border border-[#071A4A]/10 bg-white/95 shadow-xl shadow-[#071A4A]/5 sm:mb-8 sm:rounded-[2rem]">
         <div className="grid gap-0 lg:grid-cols-[340px_1fr]">
           <div className="flex items-center justify-center bg-[#FAF8F1] p-5 sm:p-8">
@@ -134,6 +141,14 @@ export default function HomePage() {
               >
                 <CircleDollarSign size={18} />
                 Caixa
+              </Link>
+
+              <Link
+                href="/instalar"
+                className="touch-button inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-[#E6AA00]/40 bg-[#FFF7D7] px-5 py-3 text-sm font-black text-[#071A4A] shadow-lg shadow-[#E6AA00]/10 transition active:scale-[0.99]"
+              >
+                <Smartphone size={18} />
+                Instalar app
               </Link>
             </div>
           </div>
@@ -271,7 +286,7 @@ export default function HomePage() {
           })}
         </div>
       </section>
-<div className="h-40 shrink-0 md:hidden" aria-hidden="true" />
+      <div className="h-40 shrink-0 md:hidden" aria-hidden="true" />
       <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#071A4A]/10 bg-white/95 px-3 py-2 shadow-2xl shadow-[#071A4A]/20 backdrop-blur md:hidden">
         <div className="mx-auto grid max-w-md grid-cols-4 gap-2">
           <Link
