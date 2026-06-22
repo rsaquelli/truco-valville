@@ -51,7 +51,7 @@ const atalhosSecundarios = [
     icone: Smartphone,
   },
   {
-    titulo: "Parcerias",
+    titulo: "Melhores Parcerias",
     descricao: "Melhores e piores duplas do truco.",
     href: "/ranking/parcerias",
     icone: BarChart3,
